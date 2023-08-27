@@ -1,4 +1,4 @@
-export class Permissions {
+export class BasePermissions {
   static forms = {
     admin: { contentType: "Forms", action: "Admin" },
     edit: { contentType: "Forms", action: "Edit" }
