@@ -10,4 +10,6 @@ Helper functions specific to ChurchApps API projects
 
 ## To Publish
 
-1. Run `npm publish --access=public`
+1. Update version number in package.json
+2. Run `npm run build`
+3. Run `npm publish --access=public`
