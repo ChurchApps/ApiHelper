@@ -1,4 +1,3 @@
-import "reflect-metadata";
 import winston from "winston";
 import WinstonCloudWatch from "winston-cloudwatch";
 import AWS from "aws-sdk";

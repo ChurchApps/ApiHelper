@@ -4,6 +4,7 @@ export * from "./DB";
 export * from "./DBCreator";
 export * from "./EncryptionHelper";
 export * from "./EnvironmentBase";
+export * from "./FileStorageHelper";
 export * from "./Interfaces";
 export * from "./LoggingHelper";
 export * from "./OmitEmpty";
