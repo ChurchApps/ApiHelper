@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import { Principal } from "./";
 import { EnvironmentBase } from "..";
 
+@injectable()
 export class CustomAuthProvider implements interfaces.AuthProvider {
   // public async getUser(req: express.Request, res: express.Response, next: express.NextFunction): Promise<interfaces.Principal> {
   public async getUser(req: express.Request, res: express.Response, next: express.NextFunction): Promise<Principal> {
