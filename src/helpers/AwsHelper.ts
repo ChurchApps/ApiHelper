@@ -13,7 +13,7 @@ export class AwsHelper {
       const response = await ssm.getParameter(params).promise();
       response.Parameter.Value
       result = (response.$response.error) ? "" :  response.Parameter.Value;
-    } catch {
+    } catch (ex) {
       result = "";
     }
     return result;
