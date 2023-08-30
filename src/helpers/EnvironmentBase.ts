@@ -1,3 +1,4 @@
+import { AwsHelper } from "./AwsHelper";
 
 export class EnvironmentBase {
   static appEnv: string;
@@ -16,14 +17,14 @@ export class EnvironmentBase {
   static smtpUser: string;
 
 
-  static populateBase(jsonData: any) {
+  static async populateBase(jsonData: any, appName:string, appEnv: string) {
     EnvironmentBase.appName = jsonData.appName;
     EnvironmentBase.appEnv = jsonData.appEnv;
-    EnvironmentBase.connectionString = process.env.CONNECTION_STRING;
+    EnvironmentBase.connectionString = process.env.CONNECTION_STRING || await AwsHelper.readParameter(`/${appEnv}/${appName}/connectionString`);
     EnvironmentBase.contentRoot = jsonData.contentRoot;
-    EnvironmentBase.encryptionKey = process.env.ENCRYPTION_KEY;
+    EnvironmentBase.encryptionKey = process.env.ENCRYPTION_KEY || await AwsHelper.readParameter(`/${appEnv}/encryptionKey`);
     EnvironmentBase.fileStore = jsonData.fileStore;
-    EnvironmentBase.jwtSecret = process.env.JWT_SECRET;
+    EnvironmentBase.jwtSecret = process.env.JWT_SECRET || await AwsHelper.readParameter(`/${appEnv}/jwtSecret`);
     EnvironmentBase.mailSystem = jsonData.mailSystem;
     EnvironmentBase.s3Bucket = jsonData.s3Bucket;
     EnvironmentBase.smtpHost = process.env.SMTP_HOST;

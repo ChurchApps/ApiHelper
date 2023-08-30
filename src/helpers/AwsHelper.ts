@@ -4,6 +4,22 @@ import { EnvironmentBase } from "./EnvironmentBase";
 
 export class AwsHelper {
 
+  //Pulls from AWS SSM Parameter Store
+  static async readParameter(parameterName: string): Promise<string> {
+    let result = "";
+    try {
+      const ssm = new AWS.SSM({ apiVersion: "2014-11-06", region: "us-east-2" });
+      const params = { Name: parameterName, WithDecryption: true };
+      const response = await ssm.getParameter(params).promise();
+      response.Parameter.Value
+      result = (response.$response.error) ? "" :  response.Parameter.Value;
+    } catch {
+      result = "";
+    }
+    return result;
+  }
+
+
   private static S3() {
     return new AWS.S3({ apiVersion: "2006-03-01" });
   }
