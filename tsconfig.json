@@ -1,17 +1,18 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
     "typeRoots": [
       "./types",
       "node_modules/@types"
     ],
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "target": "es6",
     "noImplicitAny": true,
     "moduleResolution": "node",
     "sourceMap": true,
@@ -19,21 +20,16 @@
     "baseUrl": ".",
     "strict": false,
     "allowSyntheticDefaultImports": true,
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "strictNullChecks": false,
-    "forceConsistentCasingInFileNames": true,
-    "module": "CommonJS",
-    "resolveJsonModule": true,
-    "jsx": "react",
-    "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
     "declaration": true,
     "declarationMap": true,
-    "noImplicitReturns": false,
-    "pretty": true,
-    "paths": {},
+    "paths": {
+      "*": [
+        "node_modules/*"
+      ]
+    }
   },
-  "include": ["src/**/*.ts"]
+  "include": [
+    "src/**/*",
+    "LambdaEntry.js"
+  ]
 }
