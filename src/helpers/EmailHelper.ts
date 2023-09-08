@@ -20,7 +20,7 @@ export class EmailHelper {
 
   public static readTemplate(templateFile?: string) {
     if (!templateFile) templateFile = "EmailTemplate.html";
-    const filePath = path.join(__dirname, "../../templates/" + templateFile);
+    const filePath = path.join(__dirname, "../../src/tools/templates/" + templateFile);
     const buffer = fs.readFileSync(filePath);
     const contents = buffer.toString();
     return contents;
