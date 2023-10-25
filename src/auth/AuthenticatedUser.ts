@@ -12,8 +12,10 @@ export class AuthenticatedUser {
   public lastName: string;
   public membershipStatus?: string;
   public groupIds?: string[];
+  public jwt: string;
 
   public constructor(principal: Principal) {
+    this.jwt = principal.details.jwt;
     this.id = principal.details.id;
     this.churchId = principal.details.churchId;
     this.permissions = principal.details.permissions;
