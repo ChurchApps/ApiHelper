@@ -1,6 +1,7 @@
-import AWS from "aws-sdk"
-import { ByteBuffer } from "aws-sdk/clients/cloudtrail";
-import { EnvironmentBase } from "./EnvironmentBase";
+import { S3Client, GetObjectCommand, PutObjectCommand, DeleteObjectCommand, CopyObjectCommand, ListObjectsV2Command, PutObjectAclCommand, ListObjectsV2Output } from "@aws-sdk/client-s3";
+import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
+import { EnvironmentBase } from ".";
+import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
 
 export class AwsHelper {
 
@@ -8,11 +9,11 @@ export class AwsHelper {
   static async readParameter(parameterName: string): Promise<string> {
     let result = "";
     try {
-      const ssm = new AWS.SSM({ apiVersion: "2014-11-06", region: "us-east-2" });
+      const ssm = new SSMClient({ region: "us-east-2" });
       const params = { Name: parameterName, WithDecryption: true };
-      const response = await ssm.getParameter(params).promise();
-      response.Parameter.Value
-      result = (response.$response.error) ? "" :  response.Parameter.Value;
+      const command = new GetParameterCommand(params);
+      const response = await ssm.send(command);
+      result = response?.Parameter?.Value || "";
     } catch (ex) {
       result = "";
     }
@@ -20,105 +21,109 @@ export class AwsHelper {
   }
 
 
-  private static S3() {
-    return new AWS.S3({ apiVersion: "2006-03-01" });
+  private static _client: S3Client;
+
+  private static getClient(): S3Client {
+    if (!this._client) {
+      this._client = new S3Client({});
+    }
+    return this._client;
   }
 
-  static S3PresignedUrl(key: string): Promise<any> {
-    if (key.indexOf("/") === 0) key = key.substring(1, key.length);
-    return new Promise((resolve, reject) => {
-      const params: AWS.S3.PresignedPost.Params = { Bucket: EnvironmentBase.s3Bucket }
-
-      params.Conditions = [
-        { acl: "public-read" },
-        { bucket: EnvironmentBase.s3Bucket },
-        { key },
+  static async S3PresignedUrl(key: string): Promise<any> {
+    if (key.startsWith("/")) key = key.substring(1);
+    const { url, fields } = await createPresignedPost(this.getClient(), {
+      Bucket: EnvironmentBase.s3Bucket,
+      Key: key,
+      Conditions: [
         ["starts-with", "$Content-Type", ""],
-      ];
-
-      params.Expires = 1200;
-      this.S3().createPresignedPost(params, (error: Error, data: any) => {
-        if (error) reject(error);
-        else {
-          data.key = key;
-          resolve(data);
-        }
-      });
+        { acl: "public-read" },
+      ],
+      Expires: 3600, // 1 hour
     });
+    return { url, fields, key };
   }
 
-  static S3Upload(key: string, contentType: string, contents: ByteBuffer): Promise<void> {
-    if (key.indexOf("/") === 0) key = key.substring(1, key.length);
-    return new Promise((resolve, reject) => {
-      const params: AWS.S3.PutObjectRequest = { Bucket: EnvironmentBase.s3Bucket, Key: key, Body: contents, ACL: "public-read", ContentType: contentType }
-      this.S3().upload(params, (error: Error, data: AWS.S3.ManagedUpload.SendData) => {
-        if (error) reject(error);
-        else resolve();
-      });
+  static async S3Upload(key: string, contentType: string, contents: Buffer): Promise<void> {
+    if (key.startsWith("/")) key = key.substring(1);
+    const command = new PutObjectCommand({
+      Bucket: EnvironmentBase.s3Bucket,
+      Key: key,
+      Body: contents,
+      ACL: "public-read",
+      ContentType: contentType,
     });
+    await this.getClient().send(command);
   }
 
-  static S3Move(oldKey: string, newKey: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const params: AWS.S3.CopyObjectRequest = { Bucket: EnvironmentBase.s3Bucket, Key: newKey, CopySource: EnvironmentBase.s3Bucket + "/" + oldKey }
-      this.S3().copyObject(params, (error: Error, data: AWS.S3.DeleteObjectOutput) => {
-        if (error) reject(error);
-        else {
-          this.S3Remove(oldKey).then(() => {
-            resolve();
-          })
-        }
-      });
+  static async S3Remove(key: string): Promise<void> {
+    if (key.startsWith("/")) key = key.slice(0, -1);
+    const command = new DeleteObjectCommand({
+      Bucket: EnvironmentBase.s3Bucket,
+      Key: key,
     });
-  }
-
-  static S3Remove(key: string): Promise<void> {
-    if (key.indexOf("/") === 0) key = key.substring(1, key.length - 1);
-    return new Promise((resolve, reject) => {
-      const params: AWS.S3.PutObjectRequest = { Bucket: EnvironmentBase.s3Bucket, Key: key }
-      this.S3().deleteObject(params, (error: Error, data: AWS.S3.DeleteObjectOutput) => {
-        if (error) reject(error);
-        else resolve();
-      });
-    });
+    await this.getClient().send(command);
   }
 
   static async S3Rename(oldKey: string, newKey: string): Promise<void> {
+    console.log(`Renaming: ${oldKey} to ${newKey}`);
     await this.S3Copy(oldKey, newKey);
     await this.S3Remove(oldKey);
   }
 
-  static S3Copy(oldKey: string, newKey: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const source = "/" + EnvironmentBase.s3Bucket + "/" + oldKey;
-      const params: AWS.S3.CopyObjectRequest = { Bucket: EnvironmentBase.s3Bucket, Key: newKey, CopySource: source, ACL: "public-read" }
-      this.S3().copyObject(params, (error: Error, data: AWS.S3.DeleteObjectOutput) => {
-        if (error) reject(error);
-        else resolve();
-      });
+  static S3Move(oldKey: string, newKey: string): Promise<void> {
+    return this.S3Rename(oldKey, newKey);
+  }
+
+  static async S3Copy(oldKey: string, newKey: string): Promise<void> {
+    const command = new CopyObjectCommand({
+      Bucket: EnvironmentBase.s3Bucket,
+      CopySource: `/${EnvironmentBase.s3Bucket}/${oldKey}`,
+      Key: newKey,
+      ACL: "public-read",
     });
+    await this.getClient().send(command);
   }
 
   static async S3List(path: string): Promise<string[]> {
-    return new Promise((resolve, reject) => {
-      this.S3().listObjectsV2({ Bucket: EnvironmentBase.s3Bucket, Prefix: path, MaxKeys: 100000 }, (error: Error, data: AWS.S3.ListObjectsV2Output) => {
-        if (error) reject(error);
-        else {
-          const result: string[] = [];
-          data.Contents.forEach(v => { result.push(v.Key) });
-          resolve(result)
-        }
-      });
-    });
+    return this.S3ListMultiPage(this.getClient(), EnvironmentBase.s3Bucket, path);
   }
 
-  static async S3Read(key: string): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.S3().getObject({ Bucket: EnvironmentBase.s3Bucket, Key: key }, (error: Error, data: AWS.S3.GetObjectOutput) => {
-        if (error) resolve(null);
-        else resolve(data.Body.toString());
-      });
+  static async S3ListMultiPage(s3:S3Client, bucket:string, path: string): Promise<string[]> {
+    const result: string[] = [];
+    let continuationToken: string | undefined;
+
+    do {
+      const { Contents, NextContinuationToken } = await this.S3ListManual(s3, bucket, path, continuationToken);
+      result.push(...(Contents?.map((item:any) => item.Key) || []));
+      continuationToken = NextContinuationToken;
+    } while (continuationToken);
+
+    return result;
+  }
+
+  private static async S3ListManual(s3:S3Client, bucket:string, path: string, continuationToken?: string): Promise<ListObjectsV2Output> {
+    const command = new ListObjectsV2Command({
+      Bucket: bucket,
+      Prefix: path,
+      MaxKeys: 10000,
+      ContinuationToken: continuationToken,
     });
+    return s3.send(command);
+  }
+
+  static async S3Read(key: string): Promise<string | null> {
+    try {
+      const command = new GetObjectCommand({
+        Bucket: EnvironmentBase.s3Bucket,
+        Key: key,
+      });
+      const response = await this.getClient().send(command);
+      return await response.Body?.transformToString();
+    } catch (error) {
+      console.error("Error reading from S3:", error);
+      return null;
+    }
   }
 
 }
