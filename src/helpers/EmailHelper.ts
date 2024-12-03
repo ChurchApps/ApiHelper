@@ -17,7 +17,7 @@ export class EmailHelper {
 
     const template = EmailHelper.readTemplate(emailTemplate);
     const emailBody = template
-      .replace("{appLink}", "<a href=\"" + appUrl + "/\">" + appName + "</a>")
+      .replace("{appLink}", "<a target='_blank' rel='noreferrer noopener' href=\"" + appUrl + "/\">" + appName + "</a>")
       .replace("{contents}", contents);
     await EmailHelper.sendEmail({ from, to, subject, body: emailBody });
   }
