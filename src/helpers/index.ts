@@ -11,4 +11,5 @@ export * from "./OmitEmpty";
 export * from "./BasePermissions";
 export * from "./EmailHelper";
 export * from "./MySqlHelper";
-export * from "./Pool"
+export * from "./Pool";
+export * from "./SlugHelper";
