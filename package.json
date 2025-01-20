@@ -1,6 +1,6 @@
 {
   "name": "@churchapps/apihelper",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "description": "Library of helper functions not specific to any one ChurchApps project or framework.",
   "main": "dist/index.js",
   "scripts": {
@@ -45,7 +45,6 @@
     "nodemailer-direct-transport": "^3.3.2",
     "react-ga4": "^2.1.0",
     "rrule": "^2.7.2",
-    "slug": "^10.0.0",
     "winston": "^3.10.0",
     "winston-cloudwatch": "^6.2.0"
   },

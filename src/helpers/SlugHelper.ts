@@ -1,14 +1,13 @@
-const slug = require("slug");
 
 export class SlugHelper {
 
-  static slugifyString(string: string, type: "urlPath" | "urlSlug", removeCharacters?: string[]) {
+  static slugifyString(string: string, removeCharacters?: string[]) {
     const charactersToRemove = removeCharacters ? removeCharacters : ["for", "and", "nor", "but", "or", "yet", "so", "the", "a", "an"];
     const characStr = charactersToRemove.join("|");
-    if (type === "urlPath") {
-      slug.extend({ '/': '/' }); //To keep '/' in the url since it's a special character.
-    }
-    const initialSlug = slug(string, { remove: new RegExp('\\b(' + characStr + ')\\b', 'gi') });
+    const regex = new RegExp('\\b(' + characStr + ')\\b', 'gi')
+    const cleaned = string.replace(regex, '');
+
+    const initialSlug = cleaned.replace(/ /g, "-").toLowerCase();
     const verfiedSlug = this.numerifySlug(initialSlug);
     return verfiedSlug;
   }
