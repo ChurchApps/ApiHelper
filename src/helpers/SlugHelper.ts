@@ -1,4 +1,4 @@
-import slug from "slug";
+const slug = require("slug");
 
 export class SlugHelper {
 
