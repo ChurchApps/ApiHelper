@@ -20,6 +20,7 @@ export class Pool {
       multipleStatements: true,
       waitForConnections: true,
       queueLimit: 9999,
+      charset: 'utf8mb4',
       typeCast: function castField(field, useDefaultTypeCasting) {
         // convert bit(1) to bool
         if ((field.type === "BIT") && (field.length === 1)) {
