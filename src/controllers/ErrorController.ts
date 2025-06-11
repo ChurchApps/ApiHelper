@@ -1,4 +1,4 @@
-import { controller, httpPost, httpGet, interfaces, requestParam, httpDelete } from "inversify-express-utils";
+import { controller, httpPost } from "inversify-express-utils";
 import express from "express";
 import { CustomBaseController } from "./CustomBaseController"
 import { ErrorLog } from "../models"
@@ -8,7 +8,7 @@ import { ErrorLog } from "../models"
 export class ErrorController extends CustomBaseController {
 
     @httpPost("/")
-    public async save(req: express.Request<{}, {}, ErrorLog[]>, res: express.Response): Promise<any> {
+    public async save(req: express.Request<{}, {}, ErrorLog[]>, _res: express.Response): Promise<any> {
         // try {
         /*
         try {

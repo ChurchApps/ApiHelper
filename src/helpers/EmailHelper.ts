@@ -1,6 +1,6 @@
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 import nodemailer from 'nodemailer'
-import directTransport from 'nodemailer-direct-transport'
+// Removed nodemailer-direct-transport due to security vulnerabilities
 import { EnvironmentBase, IEmailPayload } from '.'
 import fs from "fs";
 import path from "path";
@@ -34,57 +34,61 @@ export class EmailHelper {
     const sesClient = this.getSESClient();
       const sendCommand  = new SendEmailCommand({
         Destination: {
-          ToAddresses: [to],
+          ToAddresses: [to]
         },
         Message: {
           Body: {
             Html: {
               Charset: 'UTF-8',
-              Data: body,
-            },
+              Data: body
+            }
           },
           Subject: {
             Charset: 'UTF-8',
-            Data: subject,
-          },
+            Data: subject
+          }
         },
-        Source: from,
+        Source: from
 
       });
       await sesClient.send(sendCommand);
   }
 
-  public static sendEmail({ from, to, subject, body }: IEmailPayload) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        let transporter: nodemailer.Transporter = nodemailer.createTransport(directTransport({ name: "churchapps.org" }));
+  public static async sendEmail({ from, to, subject, body }: IEmailPayload): Promise<any> {
+    try {
+      // Use a safer fallback - streamline transport (for testing/dev) or require proper SMTP config
+      let transporter: nodemailer.Transporter = nodemailer.createTransport({
+        streamTransport: true,
+        newline: 'unix',
+        buffer: true
+      });
 
-        if (EnvironmentBase.mailSystem === 'SES') await this.sendSes({ from, to, subject, body });
-        else {
-          if (EnvironmentBase.mailSystem === "SMTP") {
-            transporter = nodemailer.createTransport({
-              host: EnvironmentBase.smtpHost,
-              secure: EnvironmentBase.smtpSecure,
-              auth: {
-                user: EnvironmentBase.smtpUser,
-                pass: EnvironmentBase.smtpPass
-              }
-            });
-          }
-
-          if (EnvironmentBase.mailSystem === "") {
-            console.log("****Email server not configured: ");
-            console.log(subject)
-            console.log(body);
-          }
-          else await transporter.sendMail({ from, to, subject, html: body });
+      if (EnvironmentBase.mailSystem === 'SES') {
+        await this.sendSes({ from, to, subject, body });
+      } else {
+        if (EnvironmentBase.mailSystem === "SMTP") {
+          transporter = nodemailer.createTransport({
+            host: EnvironmentBase.smtpHost,
+            secure: EnvironmentBase.smtpSecure,
+            auth: {
+              user: EnvironmentBase.smtpUser,
+              pass: EnvironmentBase.smtpPass
+            }
+          });
         }
-        resolve(null);
-      } catch (err) {
-        reject(err);
-      }
 
-    })
+        if (EnvironmentBase.mailSystem === "") {
+          console.log("****Email server not configured: ");
+          console.log(subject);
+          console.log(body);
+        } else {
+          await transporter.sendMail({ from, to, subject, html: body });
+        }
+      }
+      return null;
+    } catch (err) {
+      throw err;
+    }
   }
 
 }

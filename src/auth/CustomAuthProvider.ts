@@ -8,7 +8,7 @@ import { EnvironmentBase } from "..";
 @injectable()
 export class CustomAuthProvider implements interfaces.AuthProvider {
   // public async getUser(req: express.Request, res: express.Response, next: express.NextFunction): Promise<interfaces.Principal> {
-  public async getUser(req: express.Request, res: express.Response, next: express.NextFunction): Promise<Principal> {
+  public async getUser(req: express.Request, _res: express.Response, _next: express.NextFunction): Promise<Principal> {
     const authHeader = req.headers.authorization;
     if (authHeader) {
       const token = authHeader.split(" ")[1];

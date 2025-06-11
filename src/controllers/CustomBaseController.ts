@@ -35,7 +35,7 @@ export class CustomBaseController extends BaseHttpController {
         return result;
     }
 
-    public async actionWrapper(req: express.Request, res: express.Response, fetchFunction: (au: AuthenticatedUser) => any): Promise<any> {
+    public async actionWrapper(_req: express.Request, _res: express.Response, fetchFunction: (_au: AuthenticatedUser) => any): Promise<any> {
         try {
             const result = await fetchFunction(this.authUser());
             await this.logger.flush();
@@ -52,7 +52,7 @@ export class CustomBaseController extends BaseHttpController {
         }
     }
 
-    public async actionWrapperAnon(req: express.Request, res: express.Response, fetchFunction: () => any): Promise<any> {
+    public async actionWrapperAnon(_req: express.Request, _res: express.Response, fetchFunction: () => any): Promise<any> {
         try {
             const result = await fetchFunction();
             await this.logger.flush();

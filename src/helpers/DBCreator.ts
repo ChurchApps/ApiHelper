@@ -7,7 +7,7 @@ export class DBCreator {
   private static tables: { title: string, file: string }[] = [
     { title: "Links", file: "links.mysql" },
     { title: "Pages", file: "pages.mysql" },
-    { title: "Settings", file: "settings.mysql" },
+    { title: "Settings", file: "settings.mysql" }
   ]
 
   public static async init(selectedTables: string[]) {
@@ -20,7 +20,7 @@ export class DBCreator {
       });
     });
 
-    for (const td of todo) await this.runScript(td.title, "./src/apiBase/tools/dbScripts/" + td.file, false);
+    for (const td of todo) await this.runScript(td.title, "./src/tools/dbScripts/" + td.file, false);
     return;
   }
 

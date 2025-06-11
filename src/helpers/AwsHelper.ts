@@ -1,4 +1,4 @@
-import { S3Client, GetObjectCommand, PutObjectCommand, DeleteObjectCommand, CopyObjectCommand, ListObjectsV2Command, PutObjectAclCommand, ListObjectsV2Output } from "@aws-sdk/client-s3";
+import { S3Client, GetObjectCommand, PutObjectCommand, DeleteObjectCommand, CopyObjectCommand, ListObjectsV2Command, ListObjectsV2Output } from "@aws-sdk/client-s3";
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
 import { EnvironmentBase } from ".";
 import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
@@ -14,7 +14,7 @@ export class AwsHelper {
       const command = new GetParameterCommand(params);
       const response = await ssm.send(command);
       result = response?.Parameter?.Value || "";
-    } catch (ex) {
+    } catch {
       result = "";
     }
     return result;
@@ -37,9 +37,9 @@ export class AwsHelper {
       Key: key,
       Conditions: [
         ["starts-with", "$Content-Type", ""],
-        { acl: "public-read" },
+        { acl: "public-read" }
       ],
-      Expires: 3600, // 1 hour
+      Expires: 3600 // 1 hour
     });
     return { url, fields, key };
   }
@@ -51,16 +51,16 @@ export class AwsHelper {
       Key: key,
       Body: contents,
       ACL: "public-read",
-      ContentType: contentType,
+      ContentType: contentType
     });
     await this.getClient().send(command);
   }
 
   static async S3Remove(key: string): Promise<void> {
-    if (key.startsWith("/")) key = key.slice(0, -1);
+    if (key.startsWith("/")) key = key.substring(1);
     const command = new DeleteObjectCommand({
       Bucket: EnvironmentBase.s3Bucket,
-      Key: key,
+      Key: key
     });
     await this.getClient().send(command);
   }
@@ -80,7 +80,7 @@ export class AwsHelper {
       Bucket: EnvironmentBase.s3Bucket,
       CopySource: `/${EnvironmentBase.s3Bucket}/${oldKey}`,
       Key: newKey,
-      ACL: "public-read",
+      ACL: "public-read"
     });
     await this.getClient().send(command);
   }
@@ -107,7 +107,7 @@ export class AwsHelper {
       Bucket: bucket,
       Prefix: path,
       MaxKeys: 10000,
-      ContinuationToken: continuationToken,
+      ContinuationToken: continuationToken
     });
     return s3.send(command);
   }
@@ -116,7 +116,7 @@ export class AwsHelper {
     try {
       const command = new GetObjectCommand({
         Bucket: EnvironmentBase.s3Bucket,
-        Key: key,
+        Key: key
       });
       const response = await this.getClient().send(command);
       return await response.Body?.transformToString();

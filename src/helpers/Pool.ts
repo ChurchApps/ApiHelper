@@ -27,7 +27,7 @@ export class Pool {
           try {
             const bytes = field.buffer();
             return (bytes[0] === 1);
-          } catch (e) { return false; }
+          } catch { return false; }
         }
         return (useDefaultTypeCasting());
       }
