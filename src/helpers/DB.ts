@@ -1,5 +1,5 @@
 import { Pool } from "./Pool";
-import { PoolConnection, MysqlError, queryCallback } from "mysql";
+import { PoolConnection, QueryError } from "mysql2";
 import { LoggingHelper } from "./LoggingHelper";
 
 export class DB {
@@ -7,7 +7,7 @@ export class DB {
     // wraps in promise
     static async getConnection() {
         const promise: Promise<PoolConnection> = new Promise((resolve, reject) => {
-            Pool.current.getConnection((ex: MysqlError, conn: PoolConnection) => { if (ex) reject(ex); else resolve(conn); });
+            Pool.current.getConnection((ex: QueryError | null, conn: PoolConnection) => { if (ex) reject(ex); else resolve(conn); });
         });;
         const connection: PoolConnection = await promise;
         return connection;
@@ -15,13 +15,13 @@ export class DB {
 
     // wraps in promise
     static async getQuery(connection: PoolConnection, sql: string, params: any[]) {
-        const promise: Promise<queryCallback> = new Promise((resolve, reject) => {
-            connection.query(sql, params, async (ex, rows) => {
+        const promise: Promise<any> = new Promise((resolve, reject) => {
+            connection.query(sql, params, async (ex: QueryError | null, rows: any) => {
                 if (ex) { LoggingHelper.getCurrent().error(ex); reject(ex); }
                 else { resolve(rows); }
             });
         });
-        const query: queryCallback = await promise;
+        const query: any = await promise;
         return query;
     }
 

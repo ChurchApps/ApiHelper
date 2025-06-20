@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import mysql from "mysql";
+import mysql from "mysql2";
 import { EnvironmentBase } from ".";
 
 dotenv.config();
@@ -21,7 +21,7 @@ export class Pool {
       waitForConnections: true,
       queueLimit: 9999,
       charset: 'utf8mb4',
-      typeCast: function castField(field, useDefaultTypeCasting) {
+      typeCast: function castField(field: any, useDefaultTypeCasting: () => any) {
         // convert bit(1) to bool
         if ((field.type === "BIT") && (field.length === 1)) {
           try {
