@@ -30,7 +30,7 @@ export class AwsHelper {
     return this._client;
   }
 
-  static async S3PresignedUrl(key: string): Promise<any> {
+  static async S3PresignedUrl(key: string): Promise<{url: string, fields: Record<string, string>, key: string}> {
     if (key.startsWith("/")) key = key.substring(1);
     const { url, fields } = await createPresignedPost(this.getClient(), {
       Bucket: EnvironmentBase.s3Bucket,
@@ -95,7 +95,7 @@ export class AwsHelper {
 
     do {
       const { Contents, NextContinuationToken } = await this.S3ListManual(s3, bucket, path, continuationToken);
-      result.push(...(Contents?.map((item:any) => item.Key) || []));
+      result.push(...(Contents?.map((item) => item.Key).filter((key): key is string => key !== undefined) || []));
       continuationToken = NextContinuationToken;
     } while (continuationToken);
 

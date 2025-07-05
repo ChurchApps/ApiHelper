@@ -21,7 +21,7 @@ export class Pool {
       waitForConnections: true,
       queueLimit: 9999,
       charset: 'utf8mb4',
-      typeCast: function castField(field: any, useDefaultTypeCasting: () => any) {
+      typeCast: function castField(field: mysql.Field, useDefaultTypeCasting: () => unknown) {
         // convert bit(1) to bool
         if ((field.type === "BIT") && (field.length === 1)) {
           try {
@@ -29,7 +29,7 @@ export class Pool {
             return (bytes[0] === 1);
           } catch { return false; }
         }
-        return (useDefaultTypeCasting());
+        return useDefaultTypeCasting();
       }
     });
   }

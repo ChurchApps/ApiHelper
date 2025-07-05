@@ -14,28 +14,28 @@ export class DB {
     }
 
     // wraps in promise
-    static async getQuery(connection: PoolConnection, sql: string, params: any[]) {
-        const promise: Promise<any> = new Promise((resolve, reject) => {
-            connection.query(sql, params, async (ex: QueryError | null, rows: any) => {
+    static async getQuery(connection: PoolConnection, sql: string, params: unknown[]) {
+        const promise: Promise<unknown> = new Promise((resolve, reject) => {
+            connection.query(sql, params, async (ex: QueryError | null, rows: unknown) => {
                 if (ex) { LoggingHelper.getCurrent().error(ex); reject(ex); }
                 else { resolve(rows); }
             });
         });
-        const query: any = await promise;
+        const query: unknown = await promise;
         return query;
     }
 
-    public static async query(sql: string, params: any[]) {
-        let result: any = null;
+    public static async query(sql: string, params: unknown[]) {
+        let result: unknown = null;
         const connection = await this.getConnection();
         try { result = await this.getQuery(connection, sql, params); }
-        catch (ex:any) { LoggingHelper.getCurrent().error(ex); }
+        catch (ex: unknown) { LoggingHelper.getCurrent().error(ex as Error); }
         finally { connection.release(); }
         return result;
     }
 
-    public static async queryOne(sql: string, params: any[]) {
-        const result: any = await this.query(sql, params);
-        return result.length > 0 ? result[0] : null;
+    public static async queryOne(sql: string, params: unknown[]) {
+        const result = await this.query(sql, params) as unknown[];
+        return result?.length > 0 ? result[0] : null;
     }
 }

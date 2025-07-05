@@ -1,9 +1,24 @@
 import { interfaces } from "inversify-express-utils";
 
-export class Principal implements interfaces.Principal {
-  public details: any;
+export interface PrincipalDetails {
+  jwt?: string;
+  id?: string;
+  churchId?: string;
+  permissions?: string[];
+  apiName?: string;
+  email?: string;
+  personId?: string;
+  firstName?: string;
+  lastName?: string;
+  membershipStatus?: string;
+  groupIds?: string[];
+  [key: string]: unknown;
+}
 
-  public constructor(details: any) {
+export class Principal implements interfaces.Principal {
+  public details: PrincipalDetails;
+
+  public constructor(details: PrincipalDetails) {
     this.details = details;
   }
 
@@ -11,7 +26,7 @@ export class Principal implements interfaces.Principal {
     return Promise.resolve(true);
   }
 
-  public isResourceOwner(resourceId: any): Promise<boolean> {
+  public isResourceOwner(resourceId: string | number): Promise<boolean> {
     return Promise.resolve(resourceId === 1111);
   }
 

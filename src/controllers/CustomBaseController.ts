@@ -22,7 +22,7 @@ export class CustomBaseController extends BaseHttpController {
 
     public authUser(): AuthenticatedUser {
         if (this.httpContext.user === null) return new AuthenticatedUser(new Principal({}));
-        else return new AuthenticatedUser(this.httpContext.user);
+        else return new AuthenticatedUser(this.httpContext.user as Principal);
     }
 
     public include(req: express.Request, item: string) {
@@ -35,37 +35,37 @@ export class CustomBaseController extends BaseHttpController {
         return result;
     }
 
-    public async actionWrapper(_req: express.Request, _res: express.Response, fetchFunction: (_au: AuthenticatedUser) => any): Promise<any> {
+    public async actionWrapper(_req: express.Request, _res: express.Response, fetchFunction: (_au: AuthenticatedUser) => unknown): Promise<unknown> {
         try {
             const result = await fetchFunction(this.authUser());
             await this.logger.flush();
             return result;
-        } catch (e:any) {
+        } catch (e: unknown) {
             try {
-                this.logger.error(e);
+                this.logger.error(e as Error);
                 await this.logger.flush();
             } catch (e) {
                 console.log(e);
             }
 
-            return this.internalServerError(e);
+            return this.internalServerError(e as Error);
         }
     }
 
-    public async actionWrapperAnon(_req: express.Request, _res: express.Response, fetchFunction: () => any): Promise<any> {
+    public async actionWrapperAnon(_req: express.Request, _res: express.Response, fetchFunction: () => unknown): Promise<unknown> {
         try {
             const result = await fetchFunction();
             await this.logger.flush();
             return result;
-        } catch (e:any) {
+        } catch (e: unknown) {
             try {
-                this.logger.error(e);
+                this.logger.error(e as Error);
                 await this.logger.flush();
             } catch (e) {
                 console.log(e);
             }
 
-            return this.internalServerError(e);
+            return this.internalServerError(e as Error);
         }
     }
 

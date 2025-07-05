@@ -54,7 +54,7 @@ export class EmailHelper {
       await sesClient.send(sendCommand);
   }
 
-  public static async sendEmail({ from, to, subject, body }: IEmailPayload): Promise<any> {
+  public static async sendEmail({ from, to, subject, body }: IEmailPayload): Promise<void> {
     try {
       // Use a safer fallback - streamline transport (for testing/dev) or require proper SMTP config
       let transporter: nodemailer.Transporter = nodemailer.createTransport({

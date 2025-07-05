@@ -15,15 +15,15 @@ export class AuthenticatedUser {
   public jwt: string;
 
   public constructor(principal: Principal) {
-    this.jwt = principal.details.jwt;
-    this.id = principal.details.id;
-    this.churchId = principal.details.churchId;
-    this.permissions = principal.details.permissions;
-    this.apiName = principal.details.apiName;
-    this.email = principal.details.email;
-    this.personId = principal.details.personId;
-    this.firstName = principal.details.firstName;
-    this.lastName = principal.details.lastName;
+    this.jwt = principal.details.jwt || "";
+    this.id = principal.details.id || "";
+    this.churchId = principal.details.churchId || "";
+    this.permissions = principal.details.permissions || [];
+    this.apiName = principal.details.apiName || "";
+    this.email = principal.details.email || "";
+    this.personId = principal.details.personId || "";
+    this.firstName = principal.details.firstName || "";
+    this.lastName = principal.details.lastName || "";
     this.membershipStatus = principal.details.membershipStatus;
     this.groupIds = principal.details.groupIds;
   }

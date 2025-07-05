@@ -8,7 +8,7 @@ import { ErrorLog } from "../models"
 export class ErrorController extends CustomBaseController {
 
     @httpPost("/")
-    public async save(req: express.Request<{}, {}, ErrorLog[]>, _res: express.Response): Promise<any> {
+    public async save(req: express.Request<{}, {}, ErrorLog[]>, _res: express.Response): Promise<ErrorLog[]> {
         // try {
         /*
         try {

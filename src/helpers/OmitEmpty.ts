@@ -5,21 +5,32 @@
 
 import typeOf from "kind-of";
 
+interface OmitEmptyOptions {
+    omitZero?: boolean;
+    omitEmptyArray?: boolean;
+    excludedProperties?: string[];
+}
+
+interface RuntimeOptions {
+    omitZero: boolean;
+    omitEmptyArray: boolean;
+    excludedProperties: string[];
+}
 
 export class OmitEmpty {
-    public static omitEmpty(obj: any, options = {}) {
+    public static omitEmpty(obj: unknown, options: OmitEmptyOptions = {}): unknown {
         const runtimeOpts = OmitEmpty._buildRuntimeOpts(options);
 
-        const omit = (value: any, opts: any) => {
+        const omit = (value: unknown, opts: RuntimeOptions): unknown => {
             if (Array.isArray(value)) {
                 value = value.map(v => omit(v, opts)).filter(v => !OmitEmpty.isEmpty(v, opts));
             }
 
-            if (typeOf(value) === "object") {
-                const result: any = {};
-                for (const key of Object.keys(value)) {
+            if (typeOf(value) === "object" && value !== null) {
+                const result: Record<string, unknown> = {};
+                for (const key of Object.keys(value as Record<string, unknown>)) {
                     if (!opts.excludedProperties.includes(key)) {
-                        const val: any = omit(value[key], opts);
+                        const val = omit((value as Record<string, unknown>)[key], opts);
                         if (val !== void 0) {
                             result[key] = val;
                         }
@@ -41,7 +52,7 @@ export class OmitEmpty {
     }
 
 
-    private static _buildRuntimeOpts(options: any = {}) {
+    private static _buildRuntimeOpts(options: OmitEmptyOptions = {}): RuntimeOptions {
         return {
             omitZero: options.omitZero || false,
             omitEmptyArray: options.omitEmptyArray || false,
@@ -49,7 +60,7 @@ export class OmitEmpty {
         };
     };
 
-    private static isEmpty(value: any, runtimeOpts: any) {
+    private static isEmpty(value: unknown, runtimeOpts: RuntimeOptions): boolean {
         switch (typeOf(value)) {
             case "null":
             case "undefined":
@@ -61,18 +72,18 @@ export class OmitEmpty {
                 return false;
             case "string":
             case "arguments":
-                return value.length === 0;
+                return (value as string).length === 0;
             case "file":
             case "map":
             case "set":
-                return value.size === 0;
+                return (value as { size: number }).size === 0;
             case "number":
                 return runtimeOpts.omitZero ? value === 0 : false;
             case "error":
-                return value.message === "";
+                return (value as Error).message === "";
             case "array":
                 if (runtimeOpts.omitEmptyArray) {
-                    for (const ele of value) {
+                    for (const ele of (value as unknown[])) {
                         if (!OmitEmpty.isEmpty(ele, runtimeOpts)) {
                             return false;
                         }
@@ -82,8 +93,8 @@ export class OmitEmpty {
                     return false;
                 }
             case "object":
-                for (const key of Object.keys(value)) {
-                    if (!OmitEmpty.isEmpty(value[key], runtimeOpts)) {
+                for (const key of Object.keys(value as Record<string, unknown>)) {
+                    if (!OmitEmpty.isEmpty((value as Record<string, unknown>)[key], runtimeOpts)) {
                         return false;
                     }
                 }
