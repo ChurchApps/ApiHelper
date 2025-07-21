@@ -1,6 +1,6 @@
 {
   "name": "@churchapps/apihelper",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Library of helper functions not specific to any one ChurchApps project or framework.",
   "type": "module",
   "main": "dist/index.js",
@@ -42,7 +42,7 @@
     "@aws-sdk/client-ssm": "^3.840.0",
     "@aws-sdk/s3-presigned-post": "^3.842.0",
     "@aws-sdk/s3-request-presigner": "^3.842.0",
-    "@churchapps/helpers": "^1.0.42",
+    "@churchapps/helpers": "^1.0.43",
     "dotenv": "^17.0.1",
     "express": "^4.21.2",
     "fs-extra": "^11.3.0",
