@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import fs from "fs-extra";
+import fs from "fs";
 import { DB } from "./DB";
 
 export class DBCreator {

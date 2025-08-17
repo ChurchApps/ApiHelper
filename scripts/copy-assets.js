@@ -1,4 +1,4 @@
-import fs from 'fs-extra';
+import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -11,10 +11,19 @@ async function copyAssets() {
     const destDir = path.join(__dirname, '..', 'dist', 'templates');
     
     // Ensure destination directory exists
-    await fs.ensureDir(destDir);
+    await fs.promises.mkdir(destDir, { recursive: true });
     
     // Copy all files from src/tools/templates to dist/templates
-    await fs.copy(srcDir, destDir);
+    const files = await fs.promises.readdir(srcDir);
+    for (const file of files) {
+      const srcPath = path.join(srcDir, file);
+      const destPath = path.join(destDir, file);
+      const stat = await fs.promises.stat(srcPath);
+      
+      if (stat.isFile()) {
+        await fs.promises.copyFile(srcPath, destPath);
+      }
+    }
     
     console.log('Assets copied successfully');
   } catch (error) {

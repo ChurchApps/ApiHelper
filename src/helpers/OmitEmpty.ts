@@ -3,7 +3,6 @@
 
 "use strict";
 
-import typeOf from "kind-of";
 
 interface OmitEmptyOptions {
     omitZero?: boolean;
@@ -26,7 +25,7 @@ export class OmitEmpty {
                 value = value.map(v => omit(v, opts)).filter(v => !OmitEmpty.isEmpty(v, opts));
             }
 
-            if (typeOf(value) === "object" && value !== null) {
+            if (OmitEmpty.getType(value) === "object" && value !== null) {
                 const result: Record<string, unknown> = {};
                 for (const key of Object.keys(value as Record<string, unknown>)) {
                     if (!opts.excludedProperties.includes(key)) {
@@ -46,7 +45,7 @@ export class OmitEmpty {
 
         const res = omit(obj, runtimeOpts);
         if (res === void 0) {
-            return typeOf(obj) === "object" ? {} : res;
+            return OmitEmpty.getType(obj) === "object" ? {} : res;
         }
         return res;
     }
@@ -60,8 +59,29 @@ export class OmitEmpty {
         };
     };
 
+    private static getType(value: unknown): string {
+        if (value === null) return "null";
+        if (value === undefined) return "undefined";
+        if (Array.isArray(value)) return "array";
+        if (value instanceof Date) return "date";
+        if (value instanceof RegExp) return "regexp";
+        if (value instanceof Error) return "error";
+        if (value instanceof Map) return "map";
+        if (value instanceof Set) return "set";
+        if (value instanceof File) return "file";
+        
+        const type = typeof value;
+        if (type === "object") {
+            // Check if it's an arguments object
+            if (Object.prototype.toString.call(value) === '[object Arguments]') {
+                return "arguments";
+            }
+        }
+        return type;
+    }
+
     private static isEmpty(value: unknown, runtimeOpts: RuntimeOptions): boolean {
-        switch (typeOf(value)) {
+        switch (OmitEmpty.getType(value)) {
             case "null":
             case "undefined":
                 return true;
