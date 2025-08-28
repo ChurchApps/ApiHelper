@@ -41,14 +41,8 @@ export class CustomBaseController extends BaseHttpController {
             await this.logger.flush();
             return result;
         } catch (e: unknown) {
-            try {
-                this.logger.error(e as Error);
-                await this.logger.flush();
-            } catch (e) {
-                console.log(e);
-            }
-
-            return this.internalServerError(e as Error);
+            // Since logger.error now throws, just re-throw the error
+            throw e;
         }
     }
 
@@ -58,14 +52,8 @@ export class CustomBaseController extends BaseHttpController {
             await this.logger.flush();
             return result;
         } catch (e: unknown) {
-            try {
-                this.logger.error(e as Error);
-                await this.logger.flush();
-            } catch (e) {
-                console.log(e);
-            }
-
-            return this.internalServerError(e as Error);
+            // Since logger.error now throws, just re-throw the error
+            throw e;
         }
     }
 

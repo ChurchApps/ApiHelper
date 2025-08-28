@@ -22,11 +22,7 @@ export class LoggingHelper {
 
 
   public error(msg: string | object) {
-    if (this._logger === null) this.init("API");
-    this.pendingMessages = true;
-    if (EnvironmentBase.appEnv === "dev") console.log(msg);
-    this._logger.error(msg);
-    this._logger.error(new Error().stack.toString());
+    throw msg instanceof Error ? msg : new Error(typeof msg === 'string' ? msg : JSON.stringify(msg));
   }
 
   public info(msg: string | object) {
