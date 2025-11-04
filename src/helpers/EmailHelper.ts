@@ -12,8 +12,8 @@ export class EmailHelper {
   }
 
   public static async sendTemplatedEmail(from: string, to: string, appName: string, appUrl: string, subject: string, contents: string, emailTemplate: "EmailTemplate.html" | "ChurchEmailTemplate.html" = "EmailTemplate.html") {
-    if (!appName) appName = "Chums";
-    if (!appUrl) appUrl = "https://chums.org";
+    if (!appName) appName = "B1";
+    if (!appUrl) appUrl = "https://b1.church";
 
     const template = EmailHelper.readTemplate(emailTemplate);
     const emailBody = template
