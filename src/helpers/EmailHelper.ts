@@ -11,7 +11,7 @@ export class EmailHelper {
     return new SESClient({ region: "us-east-2" });
   }
 
-  public static async sendTemplatedEmail(from: string, to: string, appName: string, appUrl: string, subject: string, contents: string, emailTemplate: "EmailTemplate.html" | "ChurchEmailTemplate.html" = "EmailTemplate.html") {
+  public static async sendTemplatedEmail(from: string, to: string, appName: string, appUrl: string, subject: string, contents: string, emailTemplate: "EmailTemplate.html" | "ChurchEmailTemplate.html" = "EmailTemplate.html", replyTo?: string) {
     if (!appName) appName = "B1";
     if (!appUrl) appUrl = "https://b1.church";
 
@@ -19,7 +19,7 @@ export class EmailHelper {
     const emailBody = template
       .replace("{appLink}", "<a target='_blank' rel='noreferrer noopener' href=\"" + appUrl + "/\">" + appName + "</a>")
       .replace("{contents}", contents);
-    await EmailHelper.sendEmail({ from, to, subject, body: emailBody });
+    await EmailHelper.sendEmail({ from, to, subject, body: emailBody, replyTo });
   }
 
   public static readTemplate(templateFile?: string) {
@@ -30,7 +30,7 @@ export class EmailHelper {
     return contents;
   }
 
-  private static async sendSes({ from, to, subject, body }: IEmailPayload) {
+  private static async sendSes({ from, to, subject, body, replyTo }: IEmailPayload) {
     const sesClient = this.getSESClient();
       const sendCommand  = new SendEmailCommand({
         Destination: {
@@ -48,13 +48,13 @@ export class EmailHelper {
             Data: subject
           }
         },
-        Source: from
-
+        Source: from,
+        ReplyToAddresses: replyTo ? [replyTo] : undefined
       });
       await sesClient.send(sendCommand);
   }
 
-  public static async sendEmail({ from, to, subject, body }: IEmailPayload): Promise<void> {
+  public static async sendEmail({ from, to, subject, body, replyTo }: IEmailPayload): Promise<void> {
     try {
       // Use a safer fallback - streamline transport (for testing/dev) or require proper SMTP config
       let transporter: nodemailer.Transporter = nodemailer.createTransport({
@@ -64,7 +64,7 @@ export class EmailHelper {
       });
 
       if (EnvironmentBase.mailSystem === 'SES') {
-        await this.sendSes({ from, to, subject, body });
+        await this.sendSes({ from, to, subject, body, replyTo });
       } else {
         if (EnvironmentBase.mailSystem === "SMTP") {
           transporter = nodemailer.createTransport({
@@ -82,7 +82,7 @@ export class EmailHelper {
           console.log(subject);
           console.log(body);
         } else {
-          await transporter.sendMail({ from, to, subject, html: body });
+          await transporter.sendMail({ from, to, subject, html: body, replyTo });
         }
       }
       return null;
