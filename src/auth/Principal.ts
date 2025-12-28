@@ -12,6 +12,7 @@ export interface PrincipalDetails {
   lastName?: string;
   membershipStatus?: string;
   groupIds?: string[];
+  leaderGroupIds?: string[];
   [key: string]: unknown;
 }
 
