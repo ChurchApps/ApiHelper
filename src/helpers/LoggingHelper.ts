@@ -1,7 +1,7 @@
 import winston from "winston";
 import WinstonCloudWatch from "winston-cloudwatch";
 //import AWS from "aws-sdk";
-import { EnvironmentBase } from ".";
+import { EnvironmentBase } from "./EnvironmentBase.js";
 
 export class LoggingHelper {
   private static _current: LoggingHelper = null;

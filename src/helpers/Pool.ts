@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import mysql from "mysql2";
-import { EnvironmentBase } from ".";
+import { EnvironmentBase } from "./EnvironmentBase.js";
 
 dotenv.config();
 

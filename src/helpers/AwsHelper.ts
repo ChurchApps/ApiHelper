@@ -1,6 +1,6 @@
 import { S3Client, GetObjectCommand, PutObjectCommand, DeleteObjectCommand, CopyObjectCommand, ListObjectsV2Command, ListObjectsV2Output } from "@aws-sdk/client-s3";
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
-import { EnvironmentBase } from ".";
+import { EnvironmentBase } from "./EnvironmentBase.js";
 import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
 
 export class AwsHelper {

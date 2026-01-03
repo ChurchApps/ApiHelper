@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { EnvironmentBase } from ".";
+import { EnvironmentBase } from "./EnvironmentBase.js";
 
 export class EncryptionHelper {
   private static algorithm = 'aes-256-ctr';

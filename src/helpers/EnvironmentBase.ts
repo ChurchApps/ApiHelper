@@ -1,4 +1,4 @@
-import { AwsHelper } from "./AwsHelper";
+import { AwsHelper } from "./AwsHelper.js";
 
 export class EnvironmentBase {
   static appEnv: string;

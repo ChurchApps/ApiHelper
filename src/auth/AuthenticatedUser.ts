@@ -1,5 +1,5 @@
-import { Principal } from "./"
-import { IPermission } from "../helpers/Interfaces";
+import { Principal } from "./Principal.js";
+import { IPermission } from "../helpers/Interfaces.js";
 
 export class AuthenticatedUser {
   public id: string;

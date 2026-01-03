@@ -1,7 +1,7 @@
-import { AwsHelper } from "./AwsHelper";
+import { AwsHelper } from "./AwsHelper.js";
 import fs from "fs";
 import path from "path";
-import { EnvironmentBase } from ".";
+import { EnvironmentBase } from "./EnvironmentBase.js";
 
 export class FileStorageHelper {
   private static rootPath = path.resolve("./content") + "/";

@@ -1,6 +1,6 @@
-import { Pool } from "./Pool";
+import { Pool } from "./Pool.js";
 import { PoolConnection, QueryError } from "mysql2";
-import { LoggingHelper } from "./LoggingHelper";
+import { LoggingHelper } from "./LoggingHelper.js";
 
 export class DB {
 

@@ -1,1 +1,1 @@
-export { ErrorLog } from "./ErrorLog";
+export { ErrorLog } from "./ErrorLog.js";

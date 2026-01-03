@@ -1,7 +1,8 @@
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 import nodemailer from 'nodemailer'
 // Removed nodemailer-direct-transport due to security vulnerabilities
-import { EnvironmentBase, IEmailPayload } from '.'
+import { EnvironmentBase } from './EnvironmentBase.js';
+import { IEmailPayload } from './Interfaces.js';
 import fs from "fs";
 import path from "path";
 

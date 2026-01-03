@@ -2,8 +2,8 @@ import { injectable } from "inversify";
 import { interfaces } from "inversify-express-utils";
 import express from "express";
 import jwt from "jsonwebtoken";
-import { Principal } from "./";
-import { EnvironmentBase } from "..";
+import { Principal } from "./Principal.js";
+import { EnvironmentBase } from "../helpers/EnvironmentBase.js";
 
 @injectable()
 export class CustomAuthProvider implements interfaces.AuthProvider {

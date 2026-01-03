@@ -1,3 +1,3 @@
-export { AuthenticatedUser } from "./AuthenticatedUser";
-export { CustomAuthProvider } from "./CustomAuthProvider";
-export { Principal } from "./Principal";
+export { AuthenticatedUser } from "./AuthenticatedUser.js";
+export { CustomAuthProvider } from "./CustomAuthProvider.js";
+export { Principal } from "./Principal.js";

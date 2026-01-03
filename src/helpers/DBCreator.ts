@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import fs from "fs";
-import { DB } from "./DB";
+import { DB } from "./DB.js";
 
 export class DBCreator {
 

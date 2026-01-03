@@ -1,7 +1,7 @@
 import { BaseHttpController } from "inversify-express-utils";
 import express from "express";
-import { LoggingHelper } from "../helpers/LoggingHelper";
-import { AuthenticatedUser, Principal } from "../auth"
+import { LoggingHelper } from "../helpers/LoggingHelper.js";
+import { AuthenticatedUser, Principal } from "../auth/index.js";
 
 export class CustomBaseController extends BaseHttpController {
 

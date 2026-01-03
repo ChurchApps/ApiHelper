@@ -1,7 +1,7 @@
 import { controller, httpPost } from "inversify-express-utils";
 import express from "express";
-import { CustomBaseController } from "./CustomBaseController"
-import { ErrorLog } from "../models"
+import { CustomBaseController } from "./CustomBaseController.js";
+import { ErrorLog } from "../models/index.js";
 
 
 @controller("/errors")

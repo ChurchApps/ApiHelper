@@ -1,2 +1,2 @@
-export { CustomBaseController } from "./CustomBaseController";
-export { ErrorController } from "./ErrorController";
+export { CustomBaseController } from "./CustomBaseController.js";
+export { ErrorController } from "./ErrorController.js";
