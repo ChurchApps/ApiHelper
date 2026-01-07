@@ -1,6 +1,6 @@
 {
   "name": "@churchapps/apihelper",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Library of helper functions not specific to any one ChurchApps project or framework.",
   "type": "module",
   "main": "dist/index.js",
@@ -25,17 +25,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LiveChurchSolutions/Helpers.git"
+    "url": "git+https://github.com/ChurchApps/ApiHelper.git"
   },
   "keywords": [
     "ChurchApps"
   ],
   "author": "ChurchApps.org",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/LiveChurchSolutions/Helpers/issues"
-  },
-  "homepage": "https://github.com/LiveChurchSolutions/Helpers#readme",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.862.0",
     "@aws-sdk/client-ses": "^3.862.0",
